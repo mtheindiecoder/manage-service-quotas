@@ -1,0 +1,43 @@
+service: manage-service-quotas
+
+frameworkVersion: '3'
+
+plugins:
+  - serverless-esbuild
+
+provider:
+  runtime: nodejs18.x
+  name: aws
+  deploymentBucket:
+    name: your-bucket.serverless.deploy
+  versionFunctions: false
+  logRetentionInDays: 1
+  architecture: arm64
+  stage: test
+  region: eu-west-1
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Resource: '*'
+          Action: 'lambda:GetAccountSettings'
+
+custom:
+  esbuild:
+    bundle: true
+    minify: true
+
+functions:
+  lambdaQuotasMonitor:
+    handler: src/lambdaQuotasMonitor/handler.monitor
+    timeout: 5
+    memorySize: 128
+    events:
+      - schedule: cron(0/10 * ? * * *)
+
+resources:
+  Resources:
+    LambdaMonitorNotificationTopic: 
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: 'lambda-monitor-notification'

@@ -1,0 +1,32 @@
+{
+  "name": "manage-service-quotas",
+  "version": "1.0.0",
+  "description": "Repo that stores some examples of AWS service quotas monitor",
+  "main": "src/",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test/*",
+    "deploy": "./node_modules/.bin/serverless deploy --verbose --stage",
+    "package": "./node_modules/.bin/serverless package --stage dev"
+  },
+  "author": "theindiecoder.cloud",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mtheindiecoder/manage-service-quotas.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mtheindiecoder/manage-service-quotas/issues/"
+  },
+  "type": "module",
+  "homepage": "theindiecoder.cloud",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.3.10",
+    "esbuild": "^0.19.5",
+    "mocha": "^10.2.0",
+    "serverless": "^3.35.2",
+    "serverless-esbuild": "^1.48.5"
+  },
+  "dependencies": {
+    "@aws-sdk/client-lambda": "^3.431.0"
+  }
+}
