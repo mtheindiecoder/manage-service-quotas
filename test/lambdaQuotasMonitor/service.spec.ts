@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import * as service from "../../src/lambdaQuotasMonitor/service.js";
+import * as service from "../../src/lambdaQuotasMonitor/service";
 describe("service", () => {
   describe("isCodeStorageCloseToMaxUsage", () => {
     it("should return true if code storage is close to max usage", () => {
@@ -7,7 +7,7 @@ describe("service", () => {
         TotalCodeSize: 100,
       };
       const accountUsage = {
-        TotalCodeSize: 81,
+        TotalCodeSize: 80,
       };
       const isCloseToMaxUsage = service.isCodeStorageCloseToMaxUsage(
         accountLimit,

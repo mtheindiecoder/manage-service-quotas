@@ -4,7 +4,7 @@
   "description": "Repo that stores some examples of AWS service quotas monitor",
   "main": "src/",
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/*",
+    "test": "./node_modules/.bin/mocha -r ts-node/register test/**/*",
     "deploy": "./node_modules/.bin/serverless deploy --verbose --stage",
     "package": "./node_modules/.bin/serverless package --stage dev"
   },
@@ -16,17 +16,23 @@
   "bugs": {
     "url": "https://github.com/mtheindiecoder/manage-service-quotas/issues/"
   },
-  "type": "module",
   "homepage": "theindiecoder.cloud",
   "license": "MIT",
   "devDependencies": {
+    "@types/chai": "^4.3.9",
+    "@types/mocha": "^10.0.3",
+    "@types/sinon": "^10.0.20",
     "chai": "^4.3.10",
     "esbuild": "^0.19.5",
     "mocha": "^10.2.0",
     "serverless": "^3.35.2",
-    "serverless-esbuild": "^1.48.5"
+    "serverless-esbuild": "^1.48.5",
+    "sinon": "^17.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@aws-sdk/client-lambda": "^3.431.0"
+    "@aws-sdk/client-lambda": "^3.431.0",
+    "@aws-sdk/client-service-quotas": "^3.433.0"
   }
 }

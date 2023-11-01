@@ -2,6 +2,9 @@
 import {
   LambdaClient,
   GetAccountSettingsCommand,
+  GetAccountSettingsCommandOutput,
+  AccountLimit,
+  AccountUsage,
 } from "@aws-sdk/client-lambda";
 
 export const getAccountSettings = async () => {
@@ -13,15 +16,21 @@ export const getAccountSettings = async () => {
   return accountSettings;
 };
 
-export const monitorCodeStorage = async (accountSettings) => {
+export const monitorCodeStorage = async (
+  accountSettings: GetAccountSettingsCommandOutput
+) => {
   const accountLimit = accountSettings.AccountLimit;
   const accountUsage = accountSettings.AccountUsage;
 
-  if (isCodeStorageCloseToMaxUsage(accountLimit, accountUsage)) {
-    const details = getMonitorDetails(accountLimit, accountUsage);
-    sendNotification(details);
+  if (accountLimit && accountUsage) {
+    if (isCodeStorageCloseToMaxUsage(accountLimit, accountUsage)) {
+      const monitorDetail = getMonitorDetail(accountLimit, accountUsage);
+      sendNotification(monitorDetail);
+    }
+    console.log(accountSettings);
+  } else {
+    throw new Error("AccountLimit or AccountUsage undefined");
   }
-  console.log(accountSettings);
 };
 
 /**
@@ -31,26 +40,49 @@ export const monitorCodeStorage = async (accountSettings) => {
  * @param {AccountUsage} accountUsage The number of functions and amount of storage in use.
  * @returns boolean, true if the codeStorage is greater than 80% else otherwise
  */
-export const isCodeStorageCloseToMaxUsage = (accountLimit, accountUsage) => {
+export const isCodeStorageCloseToMaxUsage = (
+  accountLimit: AccountLimit,
+  accountUsage: AccountUsage
+) => {
   const maxUsage = accountLimit.TotalCodeSize;
   const codeStorage = accountUsage.TotalCodeSize;
 
   const gap = 0.8;
-  return codeStorage / maxUsage > gap;
+  if (codeStorage && maxUsage) {
+    return codeStorage / maxUsage >= gap;
+  } else {
+    throw new Error("actual code storage or code storage limit undefined");
+  }
 };
 
-export const getMonitorDetails = (accountLimit, accountUsage) => {
-  return {
-    codeStorage: accountUsage.TotalCodeSize,
-    codeStorageLimit: accountLimit.TotalCodeSize,
-    usagePercentage: codeStorage / maxUsage,
-  };
+export const getMonitorDetail = (
+  accountLimit: AccountLimit,
+  accountUsage: AccountUsage
+) => {
+  const codeStorage = accountUsage.TotalCodeSize;
+  const codeStorageLimit = accountLimit.TotalCodeSize;
+  if (codeStorage && codeStorageLimit) {
+    const usagePercentage = codeStorage / codeStorageLimit;
+    return {
+      codeStorage,
+      codeStorageLimit,
+      usagePercentage,
+    };
+  } else {
+    throw new Error("actual code storage or code storage limit undefined");
+  }
 };
 
 /*
  * you could send the details to a slack channel, to an sns topic (to which an email address is subscribed) or using
  * data to create your own dashboard.
  */
-export const sendNotification = (details) => {
-  console.log(details);
+export const sendNotification = (detail: MonitorDetail) => {
+  console.log(detail);
 };
+
+export interface MonitorDetail {
+  codeStorage: number;
+  codeStorageLimit: number;
+  usagePercentage: number;
+}
